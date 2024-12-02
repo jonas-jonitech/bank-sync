@@ -13,7 +13,7 @@ public class Triggers(ILoggerFactory loggerFactory, BankSysRunner bankSysRunner)
     private readonly ILogger _logger = loggerFactory.CreateLogger<Triggers>();
 
     [Function("Scheduled")]
-    public async Task Run([TimerTrigger("0 * */6 * * *")] TimerInfo myTimer)
+    public async Task Scheduled([TimerTrigger("0 */1 * * * *")] TimerInfo myTimer)
     {
         _logger.LogInformation("Scheduled bank sync executed at: {timestamp}", DateTime.Now);
         
@@ -26,7 +26,7 @@ public class Triggers(ILoggerFactory loggerFactory, BankSysRunner bankSysRunner)
     }
 
     [Function("Manual")]
-    public IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequest req)
+    public IActionResult Manual([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest req)
     {
         _logger.LogInformation("C# HTTP trigger function processed a request.");
         return new OkObjectResult("Welcome to Azure Functions!");

@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using Azure;
 using bank_sync.Core;
 using bank_sync.GoCardless.models;
 using bank_sync.GoCardless.Models;
@@ -30,10 +31,12 @@ public class GoCardlessApi(IConfiguration configuration)
         var token = await FetchToken(cancellationToken);
         _http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.AccessToken);
 
-        var query = $"api/v2/accounts/{_accountId}/transactions?from={from:yyyy-MM-dd}$to={to:yyyy-MM-dd}";
-        var response = await _http.GetFromJsonAsync<TransactionResponse>(query, cancellationToken);
+        var query = $"api/v2/accounts/{_accountId}/transactions?from={from:yyyy-MM-dd}&to={to:yyyy-MM-dd}";
 
-        return response!.Transactions.Booked.Select(t => new Core.Transaction() 
+        var response = await _http.GetAsync(query, cancellationToken);
+        var result = await response.Content.ReadFromJsonAsync<TransactionResponse>()!;
+
+        return result!.Transactions.Booked.Select(t => new Core.Transaction() 
         {
             Amount = t.TransactionAmount.Amount,
             Type = t.TransactionAmount.Amount < 0 
