@@ -8,11 +8,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Jonitech.BankSync;
 
-public class Triggers(ILoggerFactory loggerFactory, IConfiguration configuration)
+public class Triggers(ILoggerFactory loggerFactory, BankSysRunner bankSysRunner)
 {
     private readonly ILogger _logger = loggerFactory.CreateLogger<Triggers>();
-    private readonly BankSys _bankSys = new();
-    private readonly IConfiguration _configuration = configuration;
 
     [Function("Scheduled")]
     public async Task Run([TimerTrigger("0 * */6 * * *")] TimerInfo myTimer)
@@ -24,7 +22,7 @@ public class Triggers(ILoggerFactory loggerFactory, IConfiguration configuration
             _logger.LogInformation("Next bank sync schedule at: {timestamp}", myTimer.ScheduleStatus.Next);
         }
 
-
+        await bankSysRunner.Run();
     }
 
     [Function("Manual")]
