@@ -1,23 +1,30 @@
+using bank_sync.Core;
+using bank_sync.GoCardless;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Jonitech.BankSync;
 
-public class Triggers(ILoggerFactory loggerFactory)
+public class Triggers(ILoggerFactory loggerFactory, IConfiguration configuration)
 {
     private readonly ILogger _logger = loggerFactory.CreateLogger<Triggers>();
+    private readonly BankSys _bankSys = new();
+    private readonly IConfiguration _configuration = configuration;
 
     [Function("Scheduled")]
-    public void Run([TimerTrigger("0 * */6 * * *")] TimerInfo myTimer)
+    public async Task Run([TimerTrigger("0 * */6 * * *")] TimerInfo myTimer)
     {
-        _logger.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+        _logger.LogInformation("Scheduled bank sync executed at: {timestamp}", DateTime.Now);
         
         if (myTimer.ScheduleStatus is not null)
         {
-            _logger.LogInformation($"Next timer schedule at: {myTimer.ScheduleStatus.Next}");
+            _logger.LogInformation("Next bank sync schedule at: {timestamp}", myTimer.ScheduleStatus.Next);
         }
+
+
     }
 
     [Function("Manual")]
