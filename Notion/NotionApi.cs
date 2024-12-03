@@ -1,5 +1,7 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using bank_sync.Core;
 using bank_sync.GoCardless.models;
 using bank_sync.Notion.models;
@@ -105,10 +107,20 @@ public class NotionApi(IConfiguration configuration, HttpClient http)
                     },
                     Inflow = item.Type is TransactionType.Income ? new NumberProperty
                     {
-                        Number = 
-                    }
+                        Number = (double)item.Amount
+                    } : null,
+                    Outflow = item.Type is TransactionType.Expense ? new NumberProperty
+                    {
+                        Number = (double)item.Amount
+                    } : null
                 }
-            }
+            };
+
+            var json = JsonSerializer.Serialize(content);
+            request.Content = new StringContent(json);
+
+            // Send the request
+            await http.SendAsync(request, cancellationToken);
         }
     }
 }
