@@ -13,7 +13,7 @@ public class Triggers(ILoggerFactory loggerFactory, BankSysRunner bankSysRunner)
     private readonly ILogger _logger = loggerFactory.CreateLogger<Triggers>();
 
     [Function("Scheduled")]
-    public async Task Scheduled([TimerTrigger("0 */1 * * * *")] TimerInfo myTimer)
+    public async Task Scheduled([TimerTrigger("0 0,3,6,9,12,15,18,21 * * *")] TimerInfo myTimer)
     {
         _logger.LogInformation("Scheduled bank sync executed at: {timestamp}", DateTime.Now);
         

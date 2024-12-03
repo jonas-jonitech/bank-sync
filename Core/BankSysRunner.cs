@@ -27,6 +27,6 @@ public class BankSysRunner(GoCardlessApi goCardless, NotionApi notion)
         }
 
         // Add toSync to Notion
-        
+        await notion.AddItems(transactionsToSync);
     }
 }

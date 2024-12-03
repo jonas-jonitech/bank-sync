@@ -120,7 +120,7 @@ public class NotionApi(IConfiguration configuration, HttpClient http)
             request.Content = new StringContent(json);
 
             // Send the request
-            await http.SendAsync(request, cancellationToken);
+            var result = await http.SendAsync(request, cancellationToken);
         }
     }
 }
