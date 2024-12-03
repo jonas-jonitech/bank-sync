@@ -12,6 +12,8 @@ public class BankSysRunner(GoCardlessApi goCardless, NotionApi notion)
         // Fetch all transactions from GoCardless
         //var transactions = await goCardless.FetchTransactions(START_DATE, DateOnly.FromDateTime(DateTime.Today));
 
+        // Fetch all transactions already synced to Notion
         var syncedTransactions = await notion.GetItems();
+
     }
 }
