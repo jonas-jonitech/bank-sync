@@ -30,8 +30,8 @@ public record Transaction
     [JsonPropertyName("creditorName")]
     public string CreditorName { get; set; } = string.Empty;
 
-    [JsonPropertyName("debitorName")]
-    public string DebitorName { get; set; } = string.Empty;
+    [JsonPropertyName("debtorName")]
+    public string DebtorName { get; set; } = string.Empty;
 
     [JsonPropertyName("valueDate")]
     [JsonConverter(typeof(DateOnlyJsonConverter))]

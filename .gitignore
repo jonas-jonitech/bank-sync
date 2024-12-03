@@ -4,6 +4,14 @@
 # Azure Functions localsettings file
 local.settings.json
 
+# Azurite specific files
+# Azurite local storage files
+*.db
+*.log
+
+# Azurite workspace folder (default location)
+.azurite/
+
 # User-specific files
 *.suo
 *.user

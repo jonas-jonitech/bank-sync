@@ -6,8 +6,10 @@ using bank_sync.Core;
 
 var builder = FunctionsApplication.CreateBuilder(args);
 
-builder.Services.AddScoped<GoCardlessApi>();
-builder.Services.AddSingleton<BankSysRunner>();
+builder.Services.AddSingleton<BankSysRunner>()
+    .AddHttpClient<GoCardlessApi>(http => {
+        http.BaseAddress = new Uri("https://bankaccountdata.gocardless.com/");
+    });
 
 builder.ConfigureFunctionsWebApplication();
 builder.Build().Run();
