@@ -54,59 +54,65 @@ public class NumberProperty
 public class DateProperty
 {
     [JsonPropertyName("date")]
-    public Date Date { get; set; } = default!;
+    public Date? Date { get; set; }
 }
 
 public class Date
 {
     [JsonPropertyName("start")]
-    public string Start { get; set; } = default!;
+    public string? Start { get; set; }
 }
 
 public class RichTextProperty
 {
     [JsonPropertyName("rich_text")]
-    public List<RichText> RichText { get; set; } = default!;
+    public List<RichText>? RichText { get; set; }
 }
 
 public class RichText
 {
     [JsonPropertyName("text")]
-    public Text Text { get; set; } = default!;
+    public Text? Text { get; set; }
 }
 
 public class Text
 {
     [JsonPropertyName("content")]
-    public string Content { get; set; } = default!;
+    public string? Content { get; set; }
 }
 
 public class StatusProperty
 {
     [JsonPropertyName("status")]
-    public Status Status { get; set; } = default!;
+    public Status? Status { get; set; }
 }
 
 public class Status
 {
     [JsonPropertyName("id")]
-    public string Id { get; set; } = default!;
+    public string? Id { get; set; }
 }
 
 public class Select
 {
     [JsonPropertyName("id")]
-    public string Id { get; set; } = string.Empty;
+    public string? Id { get; set; }
 
     [JsonPropertyName("name")]
-    public string Name { get; set; } = string.Empty;
+    public string? Name { get; set; }
 
     [JsonPropertyName("color")]
-    public string Color { get; set; } = string.Empty;
+    public string? Color { get; set; }
 }
 
 public class TitleProperty
 {
+    [JsonPropertyName("id")]
+    public string? Id { get; set; }
+
+    [JsonPropertyName("name")]
+    public string? Name { get; set; }
+
     [JsonPropertyName("title")]
-    public List<RichText> Title { get; set; } = [];
+    public List<RichText>? Title { get; set; }
 }

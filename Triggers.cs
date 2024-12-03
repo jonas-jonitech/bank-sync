@@ -1,6 +1,7 @@
 using bank_sync.Core;
 using bank_sync.GoCardless;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
@@ -13,7 +14,8 @@ public class Triggers(ILoggerFactory loggerFactory, BankSysRunner bankSysRunner)
     private readonly ILogger _logger = loggerFactory.CreateLogger<Triggers>();
 
     [Function("Scheduled")]
-    public async Task Scheduled([TimerTrigger("0 0,3,6,9,12,15,18,21 * * *")] TimerInfo myTimer)
+    //public async Task Scheduled([TimerTrigger("0 0,3,6,9,12,15,18,21 * * *")] TimerInfo myTimer)
+    public async Task Scheduled([TimerTrigger("0 */5 * * *")] TimerInfo myTimer)
     {
         _logger.LogInformation("Scheduled bank sync executed at: {timestamp}", DateTime.Now);
         
@@ -26,9 +28,11 @@ public class Triggers(ILoggerFactory loggerFactory, BankSysRunner bankSysRunner)
     }
 
     [Function("Manual")]
-    public IActionResult Manual([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest req)
+    public async Task<ActionResult> Manual([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest req)
     {
         _logger.LogInformation("C# HTTP trigger function processed a request.");
-        return new OkObjectResult("Welcome to Azure Functions!");
+        await bankSysRunner.Run();
+
+        return new OkResult();
     }
 }

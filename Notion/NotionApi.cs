@@ -1,7 +1,9 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Net.Mime;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Unicode;
 using bank_sync.Core;
 using bank_sync.GoCardless.models;
 using bank_sync.Notion.models;
@@ -53,22 +55,22 @@ public class NotionApi(IConfiguration configuration, HttpClient http)
 
     public async Task AddItems(List<Core.Transaction> items, CancellationToken cancellationToken = default)
     {
-        // Build the request
-        var request = new HttpRequestMessage
-        {
-            Method = HttpMethod.Post,
-            RequestUri = new Uri($"{http.BaseAddress}v1/pages")
-        };
-
-        // Set headers
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
-        request.Headers.Add("Notion-Version", _version);
-
         foreach (var item in items)
         {
+            // Build the request
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri($"{http.BaseAddress}v1/pages")
+            };
+
+            // Set headers
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
+            request.Headers.Add("Notion-Version", _version);
+
             var content = new PageRequest
             {
-                parent = new Parent
+                Parent = new Parent
                 {
                     DatabaseId = _databaseId
                 },
@@ -90,7 +92,7 @@ public class NotionApi(IConfiguration configuration, HttpClient http)
                     {
                         Date = new Date
                         {
-                            Start = item.Date.ToString()
+                            Start = item.Date.ToString("yyyy-MM-dd")
                         }
                     },
                     Payee = new RichTextProperty
@@ -111,16 +113,19 @@ public class NotionApi(IConfiguration configuration, HttpClient http)
                     } : null,
                     Outflow = item.Type is TransactionType.Expense ? new NumberProperty
                     {
-                        Number = (double)item.Amount
+                        Number = (double)Math.Abs(item.Amount)
                     } : null
                 }
             };
 
-            var json = JsonSerializer.Serialize(content);
-            request.Content = new StringContent(json);
+            var json = JsonSerializer.Serialize(content, new JsonSerializerOptions
+            {
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            });
+            request.Content = new StringContent(json, new MediaTypeHeaderValue(MediaTypeNames.Application.Json));
 
             // Send the request
-            var result = await http.SendAsync(request, cancellationToken);
+            await http.SendAsync(request, cancellationToken);
         }
     }
 }

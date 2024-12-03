@@ -6,7 +6,7 @@ namespace bank_sync.Notion.models;
 public class PageRequest
 {
     [JsonPropertyName("parent")]
-    public required Parent parent { get; set; }
+    public required Parent Parent { get; set; }
 
     [JsonPropertyName("properties")]
     public required PageProperties Properties { get; set; }
