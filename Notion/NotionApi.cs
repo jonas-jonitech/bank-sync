@@ -48,4 +48,67 @@ public class NotionApi(IConfiguration configuration, HttpClient http)
             Date = DateOnly.Parse(r.Properties.Date.Date.Start)
         }).ToList();
     }
+
+    public async Task AddItems(List<Core.Transaction> items, CancellationToken cancellationToken = default)
+    {
+        // Build the request
+        var request = new HttpRequestMessage
+        {
+            Method = HttpMethod.Post,
+            RequestUri = new Uri($"{http.BaseAddress}v1/pages")
+        };
+
+        // Set headers
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
+        request.Headers.Add("Notion-Version", _version);
+
+        foreach (var item in items)
+        {
+            var content = new PageRequest
+            {
+                parent = new Parent
+                {
+                    DatabaseId = _databaseId
+                },
+                Properties = new PageProperties
+                {
+                    Id = new TitleProperty
+                    {
+                        Title = [
+                            new RichText
+                            {
+                                Text = new Text
+                                {
+                                    Content = Guid.NewGuid().ToString()
+                                }
+                            }
+                        ]
+                    },
+                    Date = new DateProperty
+                    {
+                        Date = new Date
+                        {
+                            Start = item.Date.ToString()
+                        }
+                    },
+                    Payee = new RichTextProperty
+                    {
+                        RichText = [
+                            new RichText
+                            {
+                                Text = new Text
+                                {
+                                    Content = item.Payee
+                                }
+                            }
+                        ]
+                    },
+                    Inflow = item.Type is TransactionType.Income ? new NumberProperty
+                    {
+                        Number = 
+                    }
+                }
+            }
+        }
+    }
 }

@@ -10,10 +10,23 @@ public class BankSysRunner(GoCardlessApi goCardless, NotionApi notion)
     public async Task Run() 
     {
         // Fetch all transactions from GoCardless
-        //var transactions = await goCardless.FetchTransactions(START_DATE, DateOnly.FromDateTime(DateTime.Today));
+        var transactionsToSync = await goCardless.FetchTransactions(START_DATE, DateOnly.FromDateTime(DateTime.Today));
 
         // Fetch all transactions already synced to Notion
         var syncedTransactions = await notion.GetItems();
 
+        // Match already synced transactions and remove them from the toSync list
+        foreach (var synced in syncedTransactions)
+        {
+            var match = transactionsToSync.Find(t => t.Amount == synced.Amount && t.Date == synced.Date && t.Payee == synced.Payee);
+            if (match != null)
+            {
+                // already synced
+                transactionsToSync.Remove(match);
+            }
+        }
+
+        // Add toSync to Notion
+        
     }
 }
