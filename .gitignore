@@ -9,6 +9,8 @@ local.settings.json
 *.db
 *.log
 __azurite_db_*.json
+__blobstorage__/
+.DS_Store
 
 # Azurite workspace folder (default location)
 .azurite/

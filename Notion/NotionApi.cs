@@ -48,7 +48,7 @@ public class NotionApi(IConfiguration configuration, HttpClient http)
             Payee = r.Properties.Payee.RichText[0].Text.Content,
             Amount = r.Properties.Inflow.Number.HasValue
                 ? (decimal)r.Properties.Inflow.Number.Value
-                : (decimal)r.Properties.Outflow.Number.GetValueOrDefault(),
+                : (decimal)r.Properties.Outflow.Number.Value * - 1,
             Date = DateOnly.Parse(r.Properties.Date.Date.Start)
         }).ToList();
     }
